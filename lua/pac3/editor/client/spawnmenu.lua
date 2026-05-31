@@ -117,7 +117,7 @@ function pace.ClientOptionsMenu(self)
 	self:Button(L"request outfits", "pac_request_outfits")
 end
 
-CreateClientConVar("pac_limit_sounds_draw_distance", 20000, true, false, "Overall multiplier for PAC3 sounds")
+CreateClientConVar("pac_limit_sounds_draw_distance", 20000, true, false, "Distance limit for PAC3 sounds")
 cvars.AddChangeCallback("pac_limit_sounds_draw_distance", function(_,_,val)
 	if not isnumber(val) then val = 0 end
 	pac.sounds_draw_dist_sqr = val * val
