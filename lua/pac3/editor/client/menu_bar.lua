@@ -1,20 +1,35 @@
 local L = pace.LanguageString
 
--- Applies the editor UI font + sizing to a single DMenu option (a DMenuOption
--- panel). SizeToContents remeasures its width for the new font (including the
--- icon/check indent) so the text is not clipped.
+-- Applies the editor UI font to a single DMenu option and overrides its height.
+--
+-- DMenuOption:PerformLayout hardcodes the option height to 22px on every layout
+-- pass (garrysmod/lua/vgui/dmenuoption.lua), which vertically clips large fonts.
+-- Calling SetTall is futile because PerformLayout overwrites it, so we wrap
+-- PerformLayout to force the height after the base logic runs. Width is handled
+-- correctly by the base SizeToContents (it tracks the current font).
 --
 -- A DMenu canvas can contain non-option children (spacers, labels, custom
--- panels) that do not have SetFont/GetText, so every method is feature-checked.
+-- panels) without SetFont/GetText, so every method is feature-checked.
 local function style_menu_option(option)
 	if not IsValid(option) then return end
 	if not option.SetFont then return end
+	if not (option.GetText and option:GetText() ~= "") then return end
+	if option.pace_font_styled then return end
+	option.pace_font_styled = true
 
-	if option.GetText and option:GetText() ~= "" then
-		option:SetFont(pace.CurrentUIFont)
-		if option.SizeToContents then option:SizeToContents() end
-		if option.SetTall then option:SetTall((pace.CurrentUIFontHeight or 14) + 6) end
+	option:SetFont(pace.CurrentUIFont)
+
+	local target_tall = (pace.CurrentUIFontHeight or 14) + 8
+
+	local old_layout = option.PerformLayout
+	option.PerformLayout = function(s, w, h)
+		if old_layout then old_layout(s, w, h) end
+		-- override the hardcoded 22px height and keep text vertically centered
+		s:SetTall(target_tall)
+		if s.SetContentAlignment then s:SetContentAlignment(4) end
 	end
+
+	option:InvalidateLayout(true)
 end
 
 -- Installs auto-styling hooks on a DMenu so every option/submenu added to it
