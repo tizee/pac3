@@ -1,5 +1,69 @@
 local L = pace.LanguageString
 
+-- Recursively applies the editor UI font to a DMenu (dropdown) and all of its
+-- options and submenus, resizing each item so larger fonts are not clipped.
+function pace.StyleMenu(menu)
+	if not IsValid(menu) then return end
+
+	local font = pace.CurrentUIFont
+	local height = (pace.CurrentUIFontHeight or 14) + 6
+
+	for _, item in ipairs(menu:GetCanvas():GetChildren()) do
+		if item.SetFont then
+			item:SetFont(font)
+		end
+
+		-- DMenuOption stores its submenu in item.SubMenu
+		if IsValid(item.SubMenu) then
+			pace.StyleMenu(item.SubMenu)
+
+			-- restyle the submenu when it is opened, since its contents may be
+			-- populated lazily on hover
+			local old_open = item.OpenSubMenu
+			item.OpenSubMenu = function(s, ...)
+				old_open(s, ...)
+				pace.StyleMenu(s.SubMenu)
+			end
+		end
+
+		if item.SetTall and item.GetText and item:GetText() ~= "" then
+			item:SetTall(height)
+		end
+	end
+
+	menu:InvalidateLayout(true)
+end
+
+-- Applies the UI font to the editor's top menu bar label buttons and resizes
+-- the bar to fit. Also hooks each menu so dropdowns inherit the UI font.
+function pace.ApplyMenuBarFont(bar)
+	if not IsValid(bar) then return end
+
+	local font = pace.CurrentUIFont
+
+	for _, child in ipairs(bar:GetChildren()) do
+		if child.SetFont then
+			child:SetFont(font)
+		end
+	end
+
+	if bar.Menus then
+		for _, menu in pairs(bar.Menus) do
+			if IsValid(menu) then
+				local old_open = menu.Open
+				menu.Open = function(s, ...)
+					local ret = old_open(s, ...)
+					pace.StyleMenu(s)
+					return ret
+				end
+			end
+		end
+	end
+
+	bar:SetTall((pace.CurrentUIFontHeight or 14) + 8)
+	bar:InvalidateLayout(true)
+end
+
 local function add_expensive_submenu_load(pnl, callback)
 	local old = pnl.OnCursorEntered
 	pnl.OnCursorEntered = function(...)
@@ -359,6 +423,7 @@ local function populate_options(menu)
 	menu:AddCVar(L"enable language identifier in text fields", "pac_editor_languageid", "1", "0")
 	pace.AddLanguagesToMenu(menu)
 	pace.AddFontsToMenu(menu)
+	pace.AddUIFontsToMenu(menu)
 	menu:AddCVar(L"Use the new PAC4.5 icon", "pac_icon", "1", "0")
 	if cookie.GetNumber("pac3_new_features_review") == 0 then
 		menu:AddOption("re-show new features review", function() cookie.Set("pac3_new_features_review", 1) pace.CloseEditor() pace.OpenEditor() pace.RefreshTree() end):SetIcon("icon16/medal_gold_1.png")
@@ -557,6 +622,8 @@ function pace.OnMenuBarPopulate(bar)
 	populate_options(bar:AddMenu(L"options"))
 	populate_player(bar:AddMenu(L"player"))
 	pace.AddToolsToMenu(bar:AddMenu(L"tools"))
+
+	pace.ApplyMenuBarFont(bar)
 
 	bar:RequestFocus(true)
 	--[[timer.Simple(0.2, function()

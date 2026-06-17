@@ -9,8 +9,12 @@ PANEL.pac3_PanelsToRemove = {
 	'btnMaxim', 'btnMinim'
 }
 
-local BAR_SIZE = 17
 local RENDERSCORE_SIZE = 20
+
+-- Sizes the menu bar from the UI font height so larger chrome text is not clipped.
+local function get_bar_size()
+	return math.max(17, (pace.CurrentUIFontHeight or 14) + 8)
+end
 
 local use_tabs = CreateClientConVar("pac_property_tabs", 1, true)
 
@@ -205,7 +209,7 @@ function PANEL:Init()
 	self:SetBottom(pnl)
 
 	self:SetCookieName("pac3_editor")
-	self:SetPos(self:GetCookieNumber("x", 0), BAR_SIZE)
+	self:SetPos(self:GetCookieNumber("x", 0), get_bar_size())
 
 	if remember_width:GetBool() then
 		self.init_w = math.max(self:GetCookieNumber("width", 280), 200)
@@ -249,7 +253,7 @@ function PANEL:MakeBar()
 	if self.menu_bar:IsValid() then self.menu_bar:Remove() end
 
 	local bar = vgui.Create("DMenuBar", self)
-	bar:SetSize(self:GetWide(), BAR_SIZE)
+	bar:SetSize(self:GetWide(), get_bar_size())
 	pace.Call("MenuBarPopulate", bar)
 	pace.MenuBar = bar
 
@@ -409,7 +413,7 @@ function PANEL:PerformLayout()
 		local sz = auto_size:GetInt()
 
 		if sz > 0 then
-			local newh = sz > 0 and (ScrH() - math.min(pace.properties:GetHeight() + RENDERSCORE_SIZE + BAR_SIZE - 6, ScrH() / 1.5))
+			local newh = sz > 0 and (ScrH() - math.min(pace.properties:GetHeight() + RENDERSCORE_SIZE + get_bar_size() - 6, ScrH() / 1.5))
 
 			if sz >= 2 then
 				local oldh = self.div:GetTopHeight()

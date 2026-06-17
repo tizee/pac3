@@ -839,6 +839,8 @@ function pace.AssetBrowser(callback, browse_types_str, part_key)
 	local zoom_controls = vgui.Create("pac_AssetBrowser_ZoomControls", menu_bar)
 	zoom_controls:Dock(RIGHT)
 
+	pace.ApplyMenuBarFont(menu_bar)
+
 
 --[[
 	local tool_bar = vgui.Create("DPanel", frame)

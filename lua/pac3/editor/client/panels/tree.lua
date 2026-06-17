@@ -9,7 +9,7 @@ PANEL.Base = "pac_dtree"
 function PANEL:Init()
 	pace.pac_dtree.Init(self)
 
-	self:SetLineHeight(18 * GetConVar("pac_editor_scale"):GetFloat())
+	self:SetLineHeight(pace.GetTreeLineHeight(18))
 	self:SetIndentSize(10)
 
 	self.parts = {}
@@ -602,7 +602,7 @@ end
 
 function PANEL:Populate(reset)
 
-	self:SetLineHeight(18 * (1 + (GetConVar("pac_editor_scale"):GetFloat()-1)))
+	self:SetLineHeight(pace.GetTreeLineHeight(18))
 	self:SetIndentSize(10)
 
 	for key, node in pairs(self.parts) do

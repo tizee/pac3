@@ -903,8 +903,9 @@ local cvar_panels = {}
 local function PopulateCategory(str, pnl, cvars_tbl)
 	--create a collapsible header category
 	local list = pnl:Add(str)
-	list.Header:SetSize(40,40)
-	list.Header:SetFont("DermaLarge")
+	local header_height = math.max(40, math.Round((pace.CurrentUIFontHeight or 14) * 1.4) + 12)
+	list.Header:SetSize(header_height, header_height)
+	list.Header:SetFont(pace.CurrentUIHeaderFont or "DermaLarge")
 	local list_list = vgui.Create("DListLayout")
 	list_list:DockPadding(20,0,20,20)
 	list:SetContents(list_list)
@@ -930,8 +931,9 @@ local function PopulateCategory(str, pnl, cvars_tbl)
 		end
 		cvar_panels[tbl[1]] = cvar_pnl
 		cvar_pnl:SetText(tbl[2])
+		if cvar_pnl.SetFont then cvar_pnl:SetFont(pace.CurrentUIFont) end
 		if tbl[3] ~= "" then cvar_pnl:SetTooltip(tbl[3]) end
-		cvar_pnl:SetSize(400,30)
+		cvar_pnl:SetSize(400, math.max(30, (pace.CurrentUIFontHeight or 14) + 12))
 
 	end
 	return list_list
@@ -1066,7 +1068,7 @@ function pace.FillEditorSettings(pnl)
 	local partmenu_choices = vgui.Create("DScrollPanel", LeftPanel)
 	local partmenu_choices_textAdd = vgui.Create("DLabel", LeftPanel)
 	partmenu_choices_textAdd:SetText("ADD MENU COMPONENTS")
-	partmenu_choices_textAdd:SetFont("DermaDefaultBold")
+	partmenu_choices_textAdd:SetFont(pace.CurrentUIFont)
 	partmenu_choices_textAdd:SetColor(Color(0,200,0))
 	partmenu_choices_textAdd:SetWidth(200)
 	partmenu_choices_textAdd:SetX(10)
@@ -1075,7 +1077,7 @@ function pace.FillEditorSettings(pnl)
 	local partmenu_choices_textRemove = vgui.Create("DLabel", LeftPanel)
 	partmenu_choices_textRemove:SetText("DOUBLE CLICK TO REMOVE")
 	partmenu_choices_textRemove:SetColor(Color(200,0,0))
-	partmenu_choices_textRemove:SetFont("DermaDefaultBold")
+	partmenu_choices_textRemove:SetFont(pace.CurrentUIFont)
 	partmenu_choices_textRemove:SetWidth(200)
 	partmenu_choices_textRemove:SetX(220)
 	partmenu_choices_textRemove:SetY(30)
@@ -1355,7 +1357,7 @@ function pace.FillEditorSettings(pnl)
 	end
 
 	local shortcuts_description_text = vgui.Create("DLabel", LeftPanel)
-	shortcuts_description_text:SetFont("DermaDefaultBold")
+	shortcuts_description_text:SetFont(pace.CurrentUIFont)
 	shortcuts_description_text:SetText("Edit keyboard shortcuts")
 	shortcuts_description_text:SetColor(Color(0,0,0))
 	shortcuts_description_text:SetWidth(200)
@@ -1553,7 +1555,7 @@ function pace.FillEditorSettings(pnl)
 	end
 
 	local bindcapture_text = vgui.Create("DLabel", LeftPanel)
-	bindcapture_text:SetFont("DermaDefaultBold")
+	bindcapture_text:SetFont(pace.CurrentUIFont)
 	bindcapture_text:SetText("")
 	bindcapture_text:SetColor(Color(0,0,0))
 	bindcapture_text:SetX(300)
@@ -1820,7 +1822,7 @@ function pace.FillEditorSettings2(pnl)
 
 	local movement_binders_label = vgui.Create("DLabel", LeftPanel)
 	movement_binders_label:SetText("PAC editor camera movement")
-	movement_binders_label:SetFont("DermaDefaultBold")
+	movement_binders_label:SetFont(pace.CurrentUIFont)
 	movement_binders_label:SetColor(Color(0,0,0))
 	movement_binders_label:SetSize(200,40)
 	movement_binders_label:SetPos(30,5)
@@ -2386,7 +2388,7 @@ function pace.ConfigureEventWheelMenu()
 			local error_label = vgui.Create("DLabel", list)
 			error_label:SetText("Uh oh, nothing to see here! Looks like you don't have any command events in your outfit!\nPlease go back to the editor.")
 			error_label:SetPos(100,200)
-			error_label:SetFont("DermaDefaultBold")
+			error_label:SetFont(pace.CurrentUIFont)
 			error_label:SetSize(450,50)
 			error_label:SetColor(Color(150,0,0))
 		end

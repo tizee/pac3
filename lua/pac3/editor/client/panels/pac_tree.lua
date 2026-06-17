@@ -1,6 +1,14 @@
 local PANEL = vgui.Register("pac_dtree_node_button", {}, "DButton")
 pace.pac_dtree_node_button = PANEL
 
+-- Computes a tree line height that tracks the actual content font glyph height so
+-- larger fonts are not clipped, while still honoring the pac_editor_scale multiplier.
+function pace.GetTreeLineHeight(base)
+	base = base or 17
+	local font_height = pace.GetFontHeight(pace.CurrentFont or "DermaDefault")
+	return math.max(base, font_height + 2) * GetConVar("pac_editor_scale"):GetFloat()
+end
+
 function PANEL:Init()
 	self:SetTextInset(32, 0)
 	self:SetContentAlignment(4)
@@ -30,7 +38,7 @@ AccessorFunc(PANEL, "m_bClickOnDragHover",      "ClickOnDragHover")
 function PANEL:Init()
 	self:SetShowIcons(true)
 	self:SetIndentSize(14)
-	self:SetLineHeight(17 * GetConVar("pac_editor_scale"):GetFloat())
+	self:SetLineHeight(pace.GetTreeLineHeight(17))
 
 	self.RootNode = self:GetCanvas():Add("pac_dtree_node")
 	self.RootNode:SetRoot(self)
