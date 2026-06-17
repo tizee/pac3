@@ -3,12 +3,15 @@ local L = pace.LanguageString
 -- Applies the editor UI font + sizing to a single DMenu option (a DMenuOption
 -- panel). SizeToContents remeasures its width for the new font (including the
 -- icon/check indent) so the text is not clipped.
+--
+-- A DMenu canvas can contain non-option children (spacers, labels, custom
+-- panels) that do not have SetFont/GetText, so every method is feature-checked.
 local function style_menu_option(option)
 	if not IsValid(option) then return end
-
-	option:SetFont(pace.CurrentUIFont)
+	if not option.SetFont then return end
 
 	if option.GetText and option:GetText() ~= "" then
+		option:SetFont(pace.CurrentUIFont)
 		if option.SizeToContents then option:SizeToContents() end
 		if option.SetTall then option:SetTall((pace.CurrentUIFontHeight or 14) + 6) end
 	end
@@ -114,11 +117,12 @@ function pace.ApplyMenuBarFont(bar)
 	resize_labels()
 
 	-- re-apply on every layout pass so the labels stay full-width and reflow
-	-- responsively when the bar is resized
+	-- responsively when the bar is resized. Resize before the base layout so the
+	-- Dock(LEFT) arrangement uses the new (wider) label widths.
 	local old_layout = bar.PerformLayout
 	bar.PerformLayout = function(s, ...)
-		if old_layout then old_layout(s, ...) end
 		resize_labels()
+		if old_layout then old_layout(s, ...) end
 	end
 
 	if bar.Menus then
