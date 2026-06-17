@@ -139,7 +139,7 @@ local function install_click(icon, path, pattern, on_menu, pathid)
 		if code == MOUSE_LEFT then
 			pace.model_browser_callback(path, pathid)
 		elseif code == MOUSE_RIGHT then
-			local menu = DermaMenu()
+			local menu = pace.DermaMenu()
 			menu:AddOption(L"copy path", function()
 				if pattern then
 					for _, pattern in ipairs(isstring(pattern) and {pattern} or pattern) do
@@ -199,7 +199,7 @@ end
 local function install_right_click_for_favorite_folder(icon, path, pathid, resource_type)
 	resource_type = resource_type or pace.model_browser_browse_types_tbl[1] or "models"
 	icon.DoRightClick = function()
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 		if not table.HasValue(pace.bookmarked_ressources[resource_type],  "folder:" .. path) then
 			menu:AddOption(L"add folder to favorites : " .. path, function()
 				table.insert(pace.bookmarked_ressources[resource_type], "folder:" .. path)
@@ -970,7 +970,7 @@ function pace.AssetBrowser(callback, browse_types_str, part_key)
 
 			if code == MOUSE_RIGHT then
 				play:Start()
-				local menu = DermaMenu()
+				local menu = pace.DermaMenu()
 				menu:SetPos(input.GetCursorPos())
 				menu:AddOption(L"copy path", function()
 					SetClipboardText(sound)

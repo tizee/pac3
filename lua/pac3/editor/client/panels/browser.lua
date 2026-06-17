@@ -57,7 +57,7 @@ function PANEL:PopulateFromClient()
 end
 
 function PANEL.OnRowRightClick(_self,id, self)
-	local m=DermaMenu()
+	local m=pace.DermaMenu()
 		m:AddOption(L"View",function()
 			self:GetListView():OnClickLine(self, true)
 			self:OnSelect()

@@ -367,7 +367,7 @@ local function install_expand(node)
 		old(pnl, code, ...)
 
 		if code == MOUSE_RIGHT then
-			local menu = DermaMenu()
+			local menu = pace.DermaMenu()
 			menu:SetPos(input.GetCursorPos())
 			menu:MakePopup()
 

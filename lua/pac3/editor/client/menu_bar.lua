@@ -1,17 +1,73 @@
 local L = pace.LanguageString
 
+-- Applies the editor UI font + sizing to a single DMenu option (a DMenuOption
+-- panel). SizeToContents remeasures its width for the new font (including the
+-- icon/check indent) so the text is not clipped.
+local function style_menu_option(option)
+	if not IsValid(option) then return end
+
+	option:SetFont(pace.CurrentUIFont)
+
+	if option.GetText and option:GetText() ~= "" then
+		if option.SizeToContents then option:SizeToContents() end
+		if option.SetTall then option:SetTall((pace.CurrentUIFontHeight or 14) + 6) end
+	end
+end
+
+-- Installs auto-styling hooks on a DMenu so every option/submenu added to it
+-- (now or later) inherits the editor UI font and is sized to fit. This covers
+-- menus whose contents are populated lazily (e.g. right-click menus, hover
+-- submenus). Recurses into submenus as they are created.
+function pace.InstallMenuFont(menu)
+	if not IsValid(menu) or menu.pace_font_installed then return end
+	menu.pace_font_installed = true
+
+	local function wrap(name)
+		local old = menu[name]
+		if not old then return end
+		menu[name] = function(s, ...)
+			local a, b = old(s, ...)
+
+			-- AddOption returns the option; AddSubMenu returns (submenu, option)
+			if name == "AddSubMenu" then
+				style_menu_option(b)
+				pace.InstallMenuFont(a)
+			else
+				style_menu_option(a)
+			end
+
+			s:InvalidateLayout(true)
+			return a, b
+		end
+	end
+
+	wrap("AddOption")
+	wrap("AddSubMenu")
+	wrap("AddCVar")
+
+	-- style any options that were added before the hooks were installed
+	if menu.GetCanvas and IsValid(menu:GetCanvas()) then
+		for _, item in ipairs(menu:GetCanvas():GetChildren()) do
+			style_menu_option(item)
+		end
+	end
+	menu:InvalidateLayout(true)
+end
+
+-- Drop-in replacement for DermaMenu() that auto-applies the editor UI font.
+function pace.DermaMenu(...)
+	local menu = DermaMenu(...)
+	pace.InstallMenuFont(menu)
+	return menu
+end
+
 -- Recursively applies the editor UI font to a DMenu (dropdown) and all of its
 -- options and submenus, resizing each item so larger fonts are not clipped.
 function pace.StyleMenu(menu)
 	if not IsValid(menu) then return end
 
-	local font = pace.CurrentUIFont
-	local height = (pace.CurrentUIFontHeight or 14) + 6
-
 	for _, item in ipairs(menu:GetCanvas():GetChildren()) do
-		if item.SetFont then
-			item:SetFont(font)
-		end
+		style_menu_option(item)
 
 		-- DMenuOption stores its submenu in item.SubMenu
 		if IsValid(item.SubMenu) then
@@ -23,16 +79,6 @@ function pace.StyleMenu(menu)
 			item.OpenSubMenu = function(s, ...)
 				old_open(s, ...)
 				pace.StyleMenu(s.SubMenu)
-			end
-		end
-
-		if item.GetText and item:GetText() ~= "" then
-			-- remeasure width/height for the new font so the text is not clipped
-			if item.SizeToContents then
-				item:SizeToContents()
-			end
-			if item.SetTall then
-				item:SetTall(height)
 			end
 		end
 	end
@@ -662,7 +708,7 @@ function pace.OnMenuBarPopulate(bar)
 end
 
 function pace.OnOpenMenu()
-	local menu = DermaMenu()
+	local menu = pace.DermaMenu()
 	menu:SetPos(input.GetCursorPos())
 
 	populate_player(menu) menu:AddSpacer()

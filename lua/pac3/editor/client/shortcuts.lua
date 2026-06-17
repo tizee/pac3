@@ -478,7 +478,7 @@ function pace.DoShortcutFunc(action)
 				return old(...)
 			end
 		end
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 		local x,y = input.GetCursorPos()
 		menu:SetPos(x,y)
 
@@ -597,33 +597,33 @@ function pace.DoShortcutFunc(action)
 	end
 	if action == "add_part" then pace.OnAddPartMenu(pace.current_part) end
 	if action == "toolbar_tools" then
-		menu = DermaMenu()
+		menu = pace.DermaMenu()
 		local x,y = input.GetCursorPos()
 		menu:SetPos(x,y)
 		pace.AddToolsToMenu(menu)
 	end
 	if action == "toolbar_pac" then
-		menu = DermaMenu()
+		menu = pace.DermaMenu()
 		local x,y = input.GetCursorPos()
 		menu:AddOption("pac")
 		menu:SetPos(x,y)
 		pace.PopulateMenuBarTab(menu, "pac")
 	end
 	if action == "toolbar_options" then
-		menu = DermaMenu()
+		menu = pace.DermaMenu()
 		local x,y = input.GetCursorPos()
 		menu:SetPos(x,y)
 		pace.PopulateMenuBarTab(menu, "options")
 	end
 	if action == "toolbar_player" then
-		menu = DermaMenu()
+		menu = pace.DermaMenu()
 		local x,y = input.GetCursorPos()
 		menu:SetPos(x,y)
 		pace.PopulateMenuBarTab(menu, "player")
 
 	end
 	if action == "toolbar_view" then
-		menu = DermaMenu()
+		menu = pace.DermaMenu()
 		local x,y = input.GetCursorPos()
 		menu:SetPos(x,y)
 		pace.PopulateMenuBarTab(menu, "view")

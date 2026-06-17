@@ -101,7 +101,7 @@ function PANEL:OnMousePressed(code)
 			self.Start = self:CursorToCaret()
 		end
 	elseif(code == MOUSE_RIGHT) then
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 
 		if(self:CanUndo()) then
 			menu:AddOption("Undo",  function()

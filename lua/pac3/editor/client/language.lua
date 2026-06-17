@@ -59,7 +59,7 @@ function pace.ShowLanguageEditor()
 
 		local line = list:AddLine(english, other)
 		line.OnRightClick = function()
-			local menu = DermaMenu()
+			local menu = pace.DermaMenu()
 			menu:SetPos(input.GetCursorPos())
 			menu:AddOption(L"edit", function()
 				local window = Derma_StringRequest(

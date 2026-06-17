@@ -1044,7 +1044,7 @@ do -- list
 					goto_btn:SetImage("icon16/arrow_turn_right.png")
 
 					goto_btn.DoClick = function()
-						local menu = DermaMenu()
+						local menu = pace.DermaMenu()
 						menu:SetPos(input.GetCursorPos())
 						for part,reason in pairs(reasons_hidden) do
 							if part ~= pace.current_part then
@@ -1064,7 +1064,7 @@ do -- list
 				btn2:SetTooltip("bookmarks")
 				btn2:SetImage("icon16/cart_go.png")
 				btn2.DoClick = function()
-					local menu = DermaMenu()
+					local menu = pace.DermaMenu()
 					menu:SetPos(input.GetCursorPos())
 					menu:MakePopup()
 					populate_bookmarks(menu, "models", var)
@@ -1076,7 +1076,7 @@ do -- list
 				btn2:SetTooltip("bookmarks")
 				btn2:SetImage("icon16/cart_go.png")
 				btn2.DoClick = function()
-					local menu = DermaMenu()
+					local menu = pace.DermaMenu()
 					menu:SetPos(input.GetCursorPos())
 					menu:MakePopup()
 					populate_bookmarks(menu, "materials", var)
@@ -1089,7 +1089,7 @@ do -- list
 					btn2:SetTooltip("bookmarks")
 					btn2:SetImage("icon16/cart_go.png")
 					btn2.DoClick = function()
-						local menu = DermaMenu()
+						local menu = pace.DermaMenu()
 						menu:SetPos(input.GetCursorPos())
 						menu:MakePopup()
 						populate_bookmarks(menu, "sound", var)
@@ -1602,7 +1602,7 @@ do -- base editable
 		end
 
 		if mcode == MOUSE_RIGHT then
-			local menu = DermaMenu()
+			local menu = pace.DermaMenu()
 			menu:SetPos(input.GetCursorPos())
 			menu:MakePopup()
 			self:PopulateContextMenu(menu)
@@ -2954,7 +2954,7 @@ do -- boolean
 			self.lbl:SetText(L(tostring(b)))
 		end
 		chck.DoRightClick = function()
-			local menu = DermaMenu()
+			local menu = pace.DermaMenu()
 			menu:SetPos(input.GetCursorPos())
 			if self.user_proxies then
 				for _,part in pairs(self.user_proxies) do

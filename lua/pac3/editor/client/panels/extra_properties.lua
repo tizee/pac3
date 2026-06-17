@@ -61,7 +61,7 @@ do -- bone
 	function PANEL:MoreOptionsRightClick()
 		local bones = pac.GetModelBones(pace.current_part:GetParentOwner())
 
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 
 		menu:MakePopup()
 
@@ -192,7 +192,7 @@ do -- part
 	end
 
 	function PANEL:MoreOptionsRightClick(key)
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 
 		menu:MakePopup()
 
@@ -264,7 +264,7 @@ do -- custom animation frame event
 	end
 
 	function PANEL:MoreOptionsRightClick(key)
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 
 		menu:MakePopup()
 
@@ -302,7 +302,7 @@ do -- owner
 	end
 
 	function PANEL:MoreOptionsRightClick()
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 		menu:MakePopup()
 
 		for key, name in pairs(pac.OwnerNames) do

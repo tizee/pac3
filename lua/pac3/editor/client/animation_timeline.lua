@@ -492,7 +492,7 @@ do
 				load:Dock(RIGHT)
 				load:SetTooltip(L"load")
 				load.DoClick = function()
-					local menu = DermaMenu()
+					local menu = pace.DermaMenu()
 					menu:SetPos(load:LocalToScreen())
 
 					for _, name in pairs(file.Find("animations/*.txt", "DATA")) do
@@ -963,7 +963,7 @@ do
 			timeline.SelectKeyframe(self)
 		elseif mc == MOUSE_RIGHT then
 			timeline.SelectKeyframe(self)
-			local menu = DermaMenu()
+			local menu = pace.DermaMenu()
 			menu:AddOption(L"set length", function()
 				Derma_StringRequest(L"question",
 					L"how long should this frame be in seconds?",

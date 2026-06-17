@@ -2334,7 +2334,7 @@ do -- menu
 	end
 //@note part menu
 	function pace.OnPartMenu(obj)
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 		menu:SetPos(input.GetCursorPos())
 			--new_operations_order
 			--default_operations_order
@@ -2553,7 +2553,7 @@ do -- menu
 
 	function pace.OnNewPartMenu()
 		pace.current_part = NULL
-		local menu = DermaMenu()
+		local menu = pace.DermaMenu()
 
 		menu:MakePopup()
 		menu:SetPos(input.GetCursorPos())
