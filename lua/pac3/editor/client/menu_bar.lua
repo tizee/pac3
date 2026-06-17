@@ -26,11 +26,18 @@ function pace.StyleMenu(menu)
 			end
 		end
 
-		if item.SetTall and item.GetText and item:GetText() ~= "" then
-			item:SetTall(height)
+		if item.GetText and item:GetText() ~= "" then
+			-- remeasure width/height for the new font so the text is not clipped
+			if item.SizeToContents then
+				item:SizeToContents()
+			end
+			if item.SetTall then
+				item:SetTall(height)
+			end
 		end
 	end
 
+	-- let DMenu recompute its overall width from the widest (now remeasured) item
 	menu:InvalidateLayout(true)
 end
 
@@ -40,11 +47,32 @@ function pace.ApplyMenuBarFont(bar)
 	if not IsValid(bar) then return end
 
 	local font = pace.CurrentUIFont
+	local padding = 12
 
-	for _, child in ipairs(bar:GetChildren()) do
-		if child.SetFont then
-			child:SetFont(font)
+	local function resize_labels()
+		surface.SetFont(font)
+		for _, child in ipairs(bar:GetChildren()) do
+			if child.SetFont then
+				child:SetFont(font)
+
+				-- remeasure the label width for the new font so titles like
+				-- "options"/"player" are not clipped to "op.."/"pl.."
+				if child.GetText and child:GetText() ~= "" then
+					local tw = surface.GetTextSize(child:GetText())
+					child:SetWide(tw + padding)
+				end
+			end
 		end
+	end
+
+	resize_labels()
+
+	-- re-apply on every layout pass so the labels stay full-width and reflow
+	-- responsively when the bar is resized
+	local old_layout = bar.PerformLayout
+	bar.PerformLayout = function(s, ...)
+		if old_layout then old_layout(s, ...) end
+		resize_labels()
 	end
 
 	if bar.Menus then
